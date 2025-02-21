@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE instance-profile
+        SYSTEM "https://resources.jetbrains.com/writerside/1.0/product-profile.dtd">
+
+<instance-profile id="dl"
+                  name="Datalore"
+                  start-page="datalore-on-premises.topic">
+    <toc-element topic="datalore-on-premises.topic">
+        <toc-element topic="install-datalore-on-premises-using-kubernetes-helm.topic"/>
+        <toc-element topic="install-datalore-on-premises-using-docker.topic"/>
+    </toc-element>
+    <toc-element topic="manage-users.topic"/>
+</instance-profile>

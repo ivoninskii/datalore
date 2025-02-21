@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE topic SYSTEM "https://resources.jetbrains.com/writerside/1.0/xhtml-entities.dtd">
+<topic xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
+       id="manage-users"
+       title="Manage users">
+  <title>Manage users</title>
+  <p>As an administrator, you can use the <path>Admin panel</path> to manage users.</p>
+  <chapter title="User types and roles" id="user-types-and-roles">
+    <include from="snippets.topic" element-id="user-types-and-roles"/>
+  </chapter>
+  <chapter title="Plans" id="plans">
+    <p>
+      Plans are used to limit resources that are available for users.
+      You set up plans in Datalore config files
+      <a href="https://www.jetbrains.com/help/datalore/configure-plans-docker.html">Docker</a>
+      /
+      <a href="https://www.jetbrains.com/help/datalore/configure-plans-helm-installation.html">Helm</a>)
+      and then assign them to users from the <ui-path>Admin panel</ui-path>.
+    </p>
+    <deflist>
+      <def title="Default personal plan" id="default-personal-plan">
+        <p>
+          A default personal plan is assigned to all users according to your Datalore configuration
+          and marked as default when viewing the users.
+          It can later be changed for a non-default personal plan
+          or group plan assigned from the <ui-path>Admin panel</ui-path> by a super admin.
+        </p>
+      </def>
+      <def title="Non-default personal plan" id="non-default-personal-plan">
+        <p>
+          A non-default personal plan is assigned to an individual user from Datalore's UI
+          (<ui-path>Admin panel | Manage users</ui-path>.
+          When assigned, it takes priority over any group plans that are already or will be associated with this user,
+          until a different personal plan is assigned.
+        </p>
+      </def>
+      <def title="Group plans" id="group-plans">
+        <p>
+          Group plans are assigned by super admins to all members
+          when creating or editing a group from Datalore's UI <ui-path>Admin panel | Groups</ui-path>.
+          This makes sense when the members of a group do not have personal plans assigned to them individually
+          and you want to select one plan that will work for all of them.
+          When a user is a member of several groups,
+          the plan that is listed the last in the plan configuration has priority over the other group plans
+          associated with this user.
+          However, assigning a personal plan to a member of a group
+          overrides any current or future group plan assignments for this user.
+          Managing group plans is described in
+          <a href="https://www.jetbrains.com/help/datalore/manage-user-groups.html">Manage user groups</a>.
+        </p>
+      </def>
+    </deflist>
+  </chapter>
+  <chapter title="Procedures" id="procedures">
+    <procedure title="Access the Manage users menu" id="access-the-manage-users-menu">
+      <step>
+        <p>Click the avatar in the upper right corner of the screen and select <ui-path>Admin panel</ui-path>.</p>
+        <img src="admin_panel.png" alt="Opening Admin panel" width="200"/>
+        <p>This will open the <ui-path>Manage users</ui-path> menu of the <ui-path>Admin panel</ui-path>.</p>
+        <tip>
+          The sidebar of the panel is resizable:
+          you can collapse/expand it using the icon in its upper right corner or drag the resize handle
+          that appears when hovering over the sidebar's right border.
+        </tip>
+      </step>
+    </procedure>
+    <procedure title="View or search the user list" id="view-or-search-the-user-list">
+      <list>
+        <li>To sort the list of users by various categories, click the respective column header.</li>
+        <li>
+          <p>To search users by their IDs or emails or filter the list, use the search bar on top of the list.</p>
+          <note>Search output is limited to 100 records.</note>
+        </li>
+      </list>
+      <img src="user_list.png" alt="User list" thumbnail="true"/>
+    </procedure>
+    <procedure title="Create a user" id="create-a-user">
+      <note>
+        <p>You create users directly in Datalore only if you logged in without Hub.</p>
+        <p>
+          If you logged in using Hub, you can only create new users in Hub.
+          Refer to the official
+          <a href="https://www.jetbrains.com/help/hub/Creating-User-Accounts.html">Hub documentation</a>
+          for more details.
+          The standalone procedure for creating viewers is provided
+          <a href="https://www.jetbrains.com/help/datalore/manage-users.html#viewer_hub">here</a>.
+        </p>
+      </note>
+      <step>Go to the <ui-path>Manage users</ui-path> menu of the <ui-path>Admin panel</ui-path>.</step>
+      <step>
+        <p>
+          Click the plus icon next to the <ui-path>Manage users</ui-path> item on the <ui-path>Admin panel</ui-path>.
+        </p>
+        <img src="plus_user.png" alt="New user icon" width="460" />
+        <p>This opens the <ui-path>New user</ui-path> dialog.</p>
+      </step>
+      <step>Provide the new user's full name, email, and password in the respective fields.</step>
+      <step>
+        To assign the <ui-path>Viewer</ui-path> type to the new user,
+        expand the list under <ui-path>User type</ui-path> and select <ui-path>Viewer</ui-path>.
+      </step>
+      <step>
+        To assign a role other than the default <ui-path>Regular</ui-path>,
+        expand the list under <ui-path>User role</ui-path> and select the required role.
+      </step>
+      <step>
+        (Optional) To disable onboarding tips for the new user, select the <ui-path>Skip onboarding checkbox</ui-path>.
+      </step>
+      <step>Click the <control>Create user</control> button to finish the procedure.</step>
+      <img src="create_user.png" alt="Creating a user" width="460" />
+    </procedure>
+    <procedure title="Create a viewer (for installation with Hub)" id="create-a-viewer-for-installation-with-hub">
+      <p>
+        If you're registered in Datalore via Hub, you create a viewer role in Hub and assign it to another user.
+      </p>
+      <step>
+        <p>Create the <ui-path>Datalore Viewer</ui-path> role in Hub:</p>
+        <list type="alpha-lower">
+          <li>Go to <ui-path>Roles | New role</ui-path>.</li>
+          <li>
+            Specify the name (arbitrary value) and click <control>Create</control>.
+            In this instruction, it is assumed that you use the <b>Datalore Viewer</b> name.
+            You will refer to this role when granting it to a user.
+          </li>
+          <li>
+            <p>In <ui-path>Settings</ui-path>, specify the key (<code>datalore-viewer</code>).</p>
+            <tip>
+              <p>Alternatively, you can specify the role key in Datalore environment:</p>
+              <code-block>
+                HUB_VIEWER_ROLE_KEY: "datalore-viewer"
+              </code-block>
+            </tip>
+          </li>
+        </list>
+      </step>
+      <step>
+        <p>Assign the <ui-path>Datalore Viewer</ui-path> role to a user:</p>
+        <list type="alpha-lower">
+          <li>On the <ui-path>Users</ui-path> page, select the user.</li>
+          <li>Switch to the <ui-path>Roles</ui-path> tab and click the <ui-path>Grant role</ui-path> button.</li>
+          <li>In the <ui-path>Grant role</ui-path> dialog, enter <b>Datalore Viewer</b> in the Role field.</li>
+          <li>Set <ui-path>Scope</ui-path> to <ui-path>Global</ui-path> unless otherwise is configured.</li>
+          <li>Click the <control>Grant</control> button to close the dialog and conclude the step.</li>
+        </list>
+      </step>
+      <note>
+        If you want to create a viewer type user for an account already registered in Datalore as a user,
+        begin the procedure by deleting the associated user on the <ui-path>Admin panel</ui-path>
+        by following this
+        <a href="https://www.jetbrains.com/help/datalore/manage-users.html#delete-a-user">procedure</a>.
+      </note>
+    </procedure>
+    <procedure title="View user profiles" id="view-user-profiles">
+      <p>
+        User profile is the menu that allows to view users' account details manage their plans and roles,
+        and access their workspaces.
+      </p>
+      <step>
+        <p>
+          To open a user's profile,
+          click the respective item on the user list in the <ui-path>Manage Users</ui-path> menu.
+        </p>
+        <img src="user_profile.png" alt="User detail view" width="706"/>
+      </step>
+      <step>
+        (Optional) You can copy the link to the user's profile by clicking the link icon next to the user's name.
+      </step>
+      <step>
+        <p>Switch to the following tabs for specific information:</p>
+        <list>
+          <li><ui-path>General tab</ui-path>: user type, user role, and other basic information</li>
+          <li><ui-path>Resources tab</ui-path>: user's plan, license, and machine and storage usage information</li>
+          <li><ui-path>Computations tab</ui-path>: user's currently running machines</li>
+          <li><ui-path>Workspaces tab</ui-path>: user's Home and own workspaces</li>
+        </list>
+      </step>
+      <step>
+        To verify the user's email, click <control>Verify email</control>.
+        Optionally, you can resend the verification email.
+      </step>
+    </procedure>
+    <procedure title="Change user's role" id="change-user-s-role">
+      <p>As a super admin user, you can change other users' roles.</p>
+      <step>
+        Open the <ui-path>Manage users</ui-path> menu,
+        find the user as described in the procedure above,
+        and click the respective list item to open their profile.
+      </step>
+      <step>On the <ui-path>General</ui-path> tab, expand the role list.</step>
+      <step>Select a different role from the expanded list.</step>
+      <img src="change_role.png" alt="Changing role" width="460"/>
+    </procedure>
+    <procedure title="Change user's plan" id="change-user-s-plan">
+      <p>
+        As a super admin user, you can manage plans for other users,
+        including assigning a personal plan instead of the default one.
+      </p>
+      <note>
+        <b>Plan</b> in this context means the Datalore On-Premises parameter
+        that is used to limit resources available to users.
+        For more details about plan configuration, refer to these topics:
+        <a href="https://www.jetbrains.com/help/datalore/configure-plans-docker.html">Docker-based installation</a>
+        and
+        <a href="https://www.jetbrains.com/help/datalore/configure-plans-helm-installation.html">
+          Helm-based installation
+        </a>.
+      </note>
+      <step>
+        Open the <ui-path>Manage Users</ui-path> menu,
+        find the user as described in the procedure above,
+        and click the respective list item to open their profile.
+      </step>
+      <step>In the user's profile, switch to the <ui-path>Resources</ui-path> tab.</step>
+      <step>Under <ui-path>Plan</ui-path>, expand the list and select the required plan.</step>
+      <step>Select the required plan from the list.</step>
+      <img src="assign_plans.png" alt="Assigning plans to a user" width="706"/>
+      <p>The selected plan is assigned to the user and will override any group plans associated with them.</p>
+    </procedure>
+    <procedure title="Manage user's computations" id="manage-user-s-computations">
+      <step>Find the user and open their profile.</step>
+      <step>Switch to the <ui-path>Computations</ui-path> tab.</step>
+      <step>Sort the list of computations by clicking the respective column header.</step>
+      <step>
+        To stop a computation, click the ellipsis icon for the respective list item
+        and select the <control>Stop</control> option that appears in the popup menu.
+      </step>
+      <step>
+        To copy the notebook identifier of a specific computation,
+        click the copy icon in the Notebook column for the respective computation.
+      </step>
+      <img src="manage_comp.png" alt="Stopping a computation" width="706"/>
+    </procedure>
+    <procedure title="Manage user's workspaces" id="manage-user-s-workspaces">
+      <step>Find the user and open their profile.</step>
+      <step>Switch to the <ui-path>Workspaces</ui-path> tab.</step>
+      <step>
+        <p>
+          To open one of the user's workspaces,
+          click the ellipsis icon for the respective list
+          and select the <control>Open</control> option that appears in the popup menu.
+        </p>
+        <img src="open_ws.png" alt="Opening another user's workspace" width="460"/>
+        <p>
+          You will access the workspace from a new browser tab.
+          As an admin, you can manage the workspace with edit rights.
+        </p>
+      </step>
+      <step>
+        <p>To create a workspace that will be the user's own, do the following:</p>
+        <list type="alpha-lower">
+          <li>
+            <p>
+              Expand the <ui-path>Actions</ui-path> menu at the bottom of the user's profile
+              and select <control>Create workspace for user</control>.
+            </p>
+            <img src="manage_wks.png" alt="Manage workspaces" width="706"/>
+          </li>
+          <li>
+            In the <ui-path>New workspace</ui-path> dialog, provide a title for the new workspace
+            and click <control>Create workspace</control>.
+          </li>
+        </list>
+      </step>
+    </procedure>
+    <procedure title="Ban a user" id="ban-a-user">
+      <p>
+        Banning users forbids them from any action in Datalore until unbanning, but their accounts stay in the system.
+      </p>
+      <warning>
+        After banning a user, you cannot use their seat to register another account.
+        The seat can be released only once the user is completely deleted.
+      </warning>
+      <step>Find the user and open their detail view.</step>
+      <step>
+        Expand the <ui-path>Actions</ui-path> menu at the bottom of the user's profile
+        and select <control>Ban user</control>.
+      </step>
+      <step>
+        In the <ui-path>Ban user</ui-path> confirmation dialog,
+        specify a reason for the action (optional) and click <control>OK</control>.
+      </step>
+      <step>
+        To unban the user, expand the <ui-path>Actions menu</ui-path> and select <control>Unban user</control>.
+      </step>
+    </procedure>
+    <procedure title="Delete a user" id="delete-a-user">
+      <p>
+        This action permanently deletes all data associated with this specific user,
+        including all notebooks and their published versions.
+        Deleted data cannot be recovered.
+      </p>
+      <note>
+        This action is required when you want to create a <b>viewer</b> type user for an account
+        already registered as <b>user</b> type.
+      </note>
+      <step>Find the user and open their detail view.</step>
+      <step>
+        Expand the <ui-path>Actions</ui-path> menu at the bottom of the user's profile
+        and select <control>Delete user</control>.
+      </step>
+      <step>Click <control>OK</control> in the <ui-path>Delete user</ui-path> confirmation dialog.</step>
+    </procedure>
+    <procedure title="Disable user registration" id="disable-user-registration">
+      <p>As an administrator, you can set up whether users can register themselves or not.</p>
+      <step>
+        Click the <control>Disable registrations</control> button at the top of the <ui-path>Manage users</ui-path> menu
+        to ban users from registering themselves.
+      </step>
+      <step>To re-enable user registrations, click <control>Enable registrations</control>.</step>
+    </procedure>
+  </chapter>
+</topic>
