@@ -10,4 +10,5 @@
         <toc-element toc-title="Install in a Docker container with Docker Compose" topic="install-datalore-on-premises-using-docker.topic"/>
     </toc-element>
     <toc-element topic="manage-users.topic"/>
+    <toc-element topic="duckdb-integration.topic"/>
 </instance-profile>

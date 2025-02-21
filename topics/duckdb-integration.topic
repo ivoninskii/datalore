@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE topic SYSTEM "https://resources.jetbrains.com/writerside/1.0/xhtml-entities.dtd">
+<topic xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
+       id="duckdb-integration"
+       title="Blazing fast queries with DuckDB integration">
+  <show-structure for="chapter,def,procedure" />
+  <title>Blazing fast queries with DuckDB integration</title>
+  <p>
+    In Datalore, you can use SQL to query DataFrames and CSV files
+    thanks to the built-in integration with DuckDB — a powerful database system designed for analytical workloads.
+    It allows you to seamlessly combine data sources, transform and clean datasets,
+    perform aggregations on millions of rows, and then use the query results for further processing with Python or R.
+  </p>
+  <chapter title="Incredible speed" id="incredible-speed">
+    <p>
+      DuckDB supports analytical query workloads and operates in memory,
+      allowing it to handle joins, aggregations, and filters much faster
+      than traditional databases or data processing tools, especially on large datasets.
+    </p>
+    <img src="duckdb1.png" alt="DuckDB efficiently groups and counts large amounts of data"/>
+  </chapter>
+  <chapter title="Querying directly from DataFrames or files" id="querying-directly-from-dataframes-or-files">
+    <p>
+      DuckDB can access files directly without loading data into memory first.
+      You can run SQL queries directly on DataFrames or large CSV, Parquet,
+      or JSON files without importing or copying any data.
+      It provides you with instant insights from datasets of multiple gigabytes.
+    </p>
+  <img src="duckdb2.png" alt="Query DataFrames directly"/>
+  </chapter>
+  <chapter title="SQL support in your data analytics workflow" id="sql-support-in-your-data-analytics-workflow">
+    DuckDB provides full SQL support without requiring database setup or external infrastructure.
+    It allows you to execute powerful SQL queries alongside Python or R code making it easier to analyze data efficiently and work with large datasets.
+  </chapter>
+  <p>
+    To learn how to run queries with DuckDB, see
+    <a href="https://www.jetbrains.com/help/datalore/sql-cells.html#query-a-DataFrame-or-csv-file-in-an-sql-cell">
+    Query a DataFrame or CSV file in an SQL cell
+    </a>.
+  </p>
+</topic>
