@@ -3,43 +3,41 @@
 <topic xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" is-library="true" id="snippets" title="Snippets">
   <snippet id="user-types-and-roles">
-    <table>
-      <tr>
-        <td>Type</td>
-        <td>Roles</td>
-      </tr>
-      <tr>
-        <td>
-          <p><b>Viewer</b></p>
-          <p>
-            A special type of users who can only view notebooks and reports shared with them by other Datalore users.
-            Viewers cannot create their own notebooks or publish reports.
-          </p>
-        </td>
-        <td>Not applicable</td>
-      </tr>
-      <tr>
-        <td>
-          <p><b>User</b></p>
-          <p>
-            A user who can fully use the functionality of Datalore.
-            The admin rights depend on the assigned role (see the column on the right).
-          </p>
-        </td>
-        <td>
-          <list>
-            <li>
-              <b>Regular</b>: a regular user who can create notebooks, workspaces and reports but has no admin rights.
-            </li>
-            <li><b>Admin</b>: an admin user with access to the <ui-path>Admin panel</ui-path>.</li>
-            <li>
-              <b>Super Admin</b>: an admin user who can also change other users' roles via the
-              <ui-path>Admin panel</ui-path>.
-              The first registered user registered with Datalore is automatically granted the super admin role.
-            </li>
-          </list>
-        </td>
-      </tr>
-    </table>
+    <deflist>
+      <def title="User" id="user">
+        <p>
+          A user who can fully use the functionality of Datalore.
+        The admin rights depend on the assigned role (see the column on the right).
+        </p>
+        <p>A user can cave either of the following roles:</p>
+        <list>
+          <li>
+            <b>Regular</b>: a regular user who can create notebooks, workspaces and reports but has no admin rights.
+          </li>
+          <li><b>Admin</b>: an admin user with access to the <ui-path>Admin panel</ui-path>.</li>
+          <li>
+            <b>Super Admin</b>: an admin user who can also change other users' roles via the
+            <ui-path>Admin panel</ui-path>.
+            The first registered user registered in a Datalore installation
+            is automatically granted the Super Admin role.
+          </li>
+        </list>
+      </def>
+      <def title="Viewer" id="viewer">
+        <p>
+          A special type of users who can only view notebooks and reports shared with them by other Datalore users.
+          Viewers cannot create workspaces, create notebooks, or publish reports.
+        </p>
+        <p>
+          Viewers can be upgraded to users, but users can't be downgraded to viewers.
+        </p>
+      </def>
+    </deflist>
+  </snippet>
+  <snippet id="supported-platforms">
+    <warning>
+      <p><b>Datalore only supports 64-bit Linux as a host system.</b></p>
+      <p>ARM-based platforms, macOS, and Windows are not supported.</p>
+    </warning>
   </snippet>
 </topic>
