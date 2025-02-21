@@ -4,163 +4,158 @@
        xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
        id="install-datalore-on-premises-using-docker"
        title="Install Datalore On-Premises in Docker containers using Docker Compose">
+  <show-structure for="chapter,def,procedure" />
   <title>Install Datalore On-Premises in Docker containers using Docker Compose</title>
   <p>
-    The chapters in this section describe the processes of installing, configuring,
-    and updating Datalore On-Premises in Docker deployment (Docker Compose method).
+    This page guides you through installing and configuring Datalore On-Premises
+    in a Docker container with Docker Compose on the platform of your choice.
   </p>
   <p>
-    If you have not decided which platform or service to choose yet,
-    we recommend that you try installing Datalore On-Premises on an AWS EC2 instance.
-    Refer to <a href="https://aws.amazon.com/getting-started/guides/deploy-webapp-ec2/">this guide</a>
-    to learn how to create your own infrastructure in AWS.
+    This is the recommended way to install Datalore unless you specifically need to use Kubernetes.
   </p>
-  <p>You will learn how to do the following:</p>
+  <tip>
+    <p>
+      If you're still undecided about which platform or service to choose,
+      we recommend installing Datalore On-Premises on an AWS EC2 instance.
+    </p>
+    <p>
+      To learn how to create deploy applications in AWS, see
+      <a href="https://aws.amazon.com/getting-started/guides/deploy-webapp-ec2/">Deploy a web app on EC2</a>.
+    </p>
+  </tip>
+  <p>The installation process consists of two parts:</p>
   <list>
     <li>
       <p>
-        <a href="#basic-datalore-installation_docker">
-          Basic installation
-        </a>:
-        You complete the basic procedure to get Datalore On-Premises up and running
-        on the infrastructure of your choice.
+        <a href="#basic-datalore-installation_docker">Basic installation</a>:
+        to get Datalore On-Premises up and running on the platform of your choice.
       </p>
     </li>
     <li>
       <p>
         <a href="https://www.jetbrains.com/help/datalore/configuration-procedures-docker.html">
-          Required and optional configuration procedures
+          Configuration procedures
         </a>:
-        You customize and configure Datalore On-Premises.
-        Some of these configurations are essential for you to start working on your projects.
-      </p>
-    </li>
-    <li>
-      <p>
-        <a href="https://www.jetbrains.com/help/datalore/upgrade-datalore-on-premises-docker-installation.html">
-          Upgrade procedure
-        </a>:
-        You upgrade your version of Datalore On-Premises.
-        We duly notify you of our new releases.
+        to customize the installation.
+        Some of these configurations are necessary to begin using Datalore after installation.
       </p>
     </li>
   </list>
-  <p>
-    The instruction in this article describes the installation of Datalore On-Premises in Docker containers
-    using Docker Compose.
-    We recommend that you choose the Docker-based installation
-    if your primary goal is to get familiar with the product and its key features.
-    This is the easier and quicker procedure compared to the Helm-based method.
-  </p>
-  <warning>
-    <p>
-      Currently, we only support 64-bit Linux as a host system.
-      <b>ARM-based platforms, macOS and Windows are not supported at the moment.</b>
-    </p>
-  </warning>
+  <include from="snippets.topic" element-id="supported-platforms" />
   <deflist>
     <def title="Prerequisites" id="prerequisites">
       <p>Before installation, make sure that you have the following:</p>
       <list>
         <li>Docker</li>
-        <li>Docker Compose V2</li>
+        <li>
+          <p>Docker Compose v2</p>
+          <tip>
+            <p>To check the Docker Compose version, run the following command:</p>
+            <code-block lang="Bash">
+              docker compose version
+            </code-block>
+          </tip>
+        </li>
       </list>
-      <p>To check the requirements, execute <code>docker compose version</code>.</p>
-      <p>Expected result:</p>
-      <code-block lang="bash">
-        $ docker compose version
-        Docker Compose version v2.21.0
-      </code-block>
       <note>
-        <p>
-          If you use a reverse proxy, we recommend that you enable gzip compression by following
-          <a href="https://nginx.org/en/docs/http/ngx_http_gzip_module.html">this instruction</a>.
-        </p>
+        If you're using a reverse proxy, we recommend that you enable Gzip compression by following
+        <a href="https://nginx.org/en/docs/http/ngx_http_gzip_module.html">these instructions</a>.
       </note>
     </def>
     <def title="Hardware requirements" id="hardware-requirements">
+      <p>
+        Datalore On-Premises requires resources for running both the server, database, and computations.
+        When choosing the amount of resources,
+        take into account your projected computations and the number of agents working in parallel.
+      </p>
       <list>
         <li>Datalore server machine: 4GB of RAM (the number of CPU is irrelevant if the load is not high)</li>
         <li>For every concurrently run notebook: from 4GB of RAM</li>
+        <li>
+          <p>PostgreSQL <b>15</b> database:</p>
+          <list>
+            <li>CPU: minimum 1 core; 2 or more cores recommended</li>
+            <li>RAM: minimum 4 GB; 8 GB recommended</li>
+            <li>Available memory: minimum 4 GB minimum, 6GB or more recommended</li>
+          </list>
+        </li>
       </list>
     </def>
   </deflist>
   <chapter title="Basic Datalore installation" id="basic-datalore-installation_docker">
-    <p>Follow the instruction to install Datalore using the selected method.</p>
-    <warning title="Important">
+    <warning>
       <p>
-        When customizing the deployment, make sure you don’t change the user for the datalore-server container.
-        Otherwise, your deployment may not function properly.
+        When customizing the deployment, don’t change the user for the datalore-server container, or the deployment might not work correctly.
       </p>
     </warning>
     <procedure title="Install Datalore" id="install-datalore">
       <step>
-        Download and open the <path>docker-compose.yaml</path> file
-        <a href="https://github.com/JetBrains/datalore-configs/tree/2025.1/docker-compose">from here</a>.
+        Download and open the <path>docker-compose.yaml</path> file from the
+        <a href="https://github.com/JetBrains/datalore-configs/tree/2025.1/docker-compose"> datalore-configs repository</a>.
       </step>
       <step>
-        Replace the values of <code>DB_PASSWORD</code> and <code>POSTGRES_PASSWORD</code> properties
-        with any random string (both properties must have the same value).
-        This string will be used as your database password. Make sure you keep it secret.
+        Set the same random string for both <code>DB_PASSWORD</code> and <code>POSTGRES_PASSWORD</code> properties.
+        This string will serve as your database password, so keep it secret.
       </step>
       <step>
         <p>Run the following command and wait for Datalore to start up:</p>
-        <code-block>
+        <code-block lang="bash">
           docker compose up
         </code-block>
       </step>
       <step>
         <p>
-          Go to <path>http://127.0.0.1:8080/</path> and sign up the first user.
-          The first signed-up user will automatically receive admin rights.
+          Go to <path>http://127.0.0.1:8080/</path> and register the first user.
+          This user automatically receives the Super Admin role.
         </p>
         <tip>
-          Unless the email service is configured, there is no registration confirmation.
-          You can log in right after providing the credentials.
+          Unless the email service is configured, Datalore On-Premises sends no registration confirmation.
+          You can log in right after you register.
         </tip>
       </step>
       <step>
         <p>
-          To access Datalore by a domain other than 127.0.0.1,
-          add a URL with this host as the <code>DATALORE_PUBLIC_URL</code> parameter
-          in the <path>docker-compose.yaml</path> file.
+          Add your licence. To do that, click your avatar in the upper right corner,
+          select <ui-path>Admin panel | License</ui-path>, and enter your license key.
         </p>
-        <p>
-          For example, if you want to use the <path>https://datalore.yourcompany.com</path> domain, add the following:
-        </p>
-        <code-block lang="yaml">
-          services:
-            datalore:
-            ...
-            environment:
-              ...
-              DATALORE_PUBLIC_URL: "https://datalore.yourcompany.com"
-        </code-block>
-        <tip>
-          <list>
-            <li>Make sure the URL does not contain a trailing slash.</li>
-            <li>You will need to configure your DNS yourself.</li>
-          </list>
-        </tip>
-      </step>
-      <step>
-        <p>
-          Click your avatar in the upper right corner,
-          select <ui-path>Admin panel | License</ui-path> and provide your license key.
-        </p>
-        <img src="dl_admin_panel.png" alt="Opening Admin pane" width="296" />
+        <img src="admin_panel.png" alt="Opening Admin panel" width="296" />
       </step>
     </procedure>
-    <procedure title="(Optional) Use an external postgres database" id="optional-use-an-external-postgres-database">
+  </chapter>
+  <chapter title="Optional procedures" id="optional-procedures">
+    <procedure title="Add public URL" type="steps" id="add-public-url">
       <step>
-        <p>Add the following variables under environment: in the <path>docker-compose.yaml</path> file:</p>
+        <p>
+          To access Datalore using an address other than <path>127.0.0.1</path>,
+          add a URL without a trailing slash as the <code>DATALORE_PUBLIC_URL</code> parameter
+          in the <path>datalore.values.yaml</path> file.
+        </p>
+        <p>
+          For example, if you want to use <path>https://datalore.yourcompany.com</path>, add the following block:
+        </p>
+        <code-block lang="yaml">
+          dataloreEnv:
+            ...
+            # Make sure the URL doesn't have a trailing slash
+            DATALORE_PUBLIC_URL: "https://datalore.yourcompany.com"
+        </code-block>
+        <note>
+          You need to configure your DNS yourself.
+        </note>
+      </step>
+    </procedure>
+    <procedure title="Use an external postgres database" id="use-an-external-postgres-database">
+      <step>
+        <p>In the <path>docker-compose.yaml</path> file, add the following variables under <code>environment</code>:</p>
         <code-block lang="yaml">
             environment:
               ...
               DB_USER: "&lt;database_user&gt;"
               DB_URL: "jdbc:postgresql://[database_host]:[database_port]/[database_name]
         </code-block>
-        <tip>Make sure the <code>DB_PASSWORD</code> value is the user's password to the specified database.</tip>
+        <tip>
+          Make sure the <code>DB_PASSWORD</code> parameter contains the password for the specified database.
+        </tip>
       </step>
       <step>
         <p>In the same file, remove the following block:</p>
@@ -178,45 +173,39 @@
       </step>
       <step>Remove <code>postgresql-data: { }</code> from under <code>volumes:</code>.</step>
     </procedure>
-    <procedure title="Enable an email whitelist" id="enable-an-email-whitelist">
+    <procedure title="Enable an email allowlist" type="steps" id="enable-an-email-allowlist">
       <p>
-        Enable a whitelist for new user registration.
-        Only users with emails entered to the whitelist can be registered.
+        Enable an allowlist for new user registration.
+        Only users with email addresses included in the allowlist can register.
       </p>
-      <step>Open the <path>docker-compose.yaml</path> file.</step>
-      <step>
-        <p>Add the following parameter:</p>
+      <step><p>In the <path>docker-compose.yaml</path> file, add the following parameter:</p>
         <code-block lang="yaml">
         environment:
           EMAIL_ALLOWLIST_ENABLED: &quot;true&quot;
         </code-block>
       </step>
       <p>
-        The respective tab will be available on the
+        The <ui-path>Email allowlist</ui-path> tab will be available on the
         <a href="https://www.jetbrains.com/help/datalore/manage-email-allowlist.html">Admin panel</a>.
       </p>
     </procedure>
     <procedure title="Enable user filtration based on Hub group membership"
                id="enable-user-filtration-based-on-hub-group-membership">
       <p>
-        By default, all Hub users can get registеred unless you disable registration on the
+        By default, all Hub users can register unless you disable registration on the
         <a href="https://www.jetbrains.com/help/datalore/manage-users.html">Admin panel</a>.
-        If you want to grant Datalore access only to a specific Hub group members, perform the steps below:
+        To grant Datalore access only to a specific Hub group members:
       </p>
-      <step>Open the <path>docker-compose.yaml</path> file.</step>
-      <step>
-        <p>Add the following parameter:</p>
+      <step><p>In the <path>docker-compose.yaml</path> file, add the following parameter:</p>
         <code-block lang="yaml">
         environment:
           HUB_ALLOWLIST_GROUP: 'group_name'
         </code-block>
       </step>
     </procedure>
-    <procedure title="Configure notebook code import limit" id="configure-notebook-code-import-limit">
-      <p>Set your own value in bytes to configure the limit of notebook code import.</p>
-      <step>Open the <path>docker-compose.yaml</path> file.</step>
-      <step>
-        <p>Add the following parameter:</p>
+    <procedure title="Configure notebook code import limit" type="steps" id="configure-notebook-code-import-limit">
+      <p> You can configure the limit of notebook code import by setting your own value in bytes. To do that:</p>
+      <step><p>In the <path>docker-compose.yaml</path> file, add the following parameter:</p>
         <code-block lang="yaml">
         environment:
           VFS_MAX_IMPORT_SOURCE_LENGTH: 'integer, prefixes (K-, M-, etc.) not supported'
@@ -225,92 +214,69 @@
     </procedure>
   </chapter>
   <chapter title="Fargate restrictions" id="fargate-restrictions">
-    <p>
-      While Datalore can operate in Fargate,
-      be aware that attached files and Reactive mode will not work due to Fargate security policies.
+    <p>AWS Fargate is a serverless compute engine for containers.
+      Datalore On-Premises can run in Fargate, be you need to be aware of the following restrictions:
     </p>
+    <list>
+      <li>
+        Attached files and <a href="https://www.jetbrains.com/help/datalore/use-reactive-mode.html">Reactive mode</a>
+        do not work due to Fargate's security policies.
+      </li>
+    </list>
   </chapter>
   <chapter title="Further steps" id="further-steps">
     <p>
-      Follow the basic installation with configuration procedures.
-      Some of them are required as you need to customize Datalore On-Premises in accordance with your project.
+      Once you have your Datalore installation up and running, you need to configure it for your workload and needs.
     </p>
-    <table>
-      <tr>
-        <td>Procedure</td>
-        <td>Description</td>
-      </tr>
-      <tr>
-        <td><b>Required</b></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><a href="https://www.jetbrains.com/help/datalore/configure-docker-agents.html">Configure agents</a></td>
-        <td>Used to change the default agents configuration</td>
-      </tr>
-      <tr>
-        <td><a href="https://www.jetbrains.com/help/datalore/set-up-gpu-machines.html">Set up GPU machines</a></td>
-        <td>Used to enable GPU machines</td>
-      </tr>
-      <tr>
-        <td><a href="https://www.jetbrains.com/help/datalore/configure-plans-docker.html">Configure plans</a></td>
-        <td>Used to customize plans for your Datalore users</td>
-      </tr>
-      <tr>
-        <td><b>Optional</b></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>
-          <a href="https://www.jetbrains.com/help/datalore/customize-or-update-environment.html">
-            Customize or update environment
-          </a>
-        </td>
-        <td>Used to create multiple base environments out of custom Docker images</td>
-      </tr>
-      <tr>
-        <td>
-          <a href="https://www.jetbrains.com/help/datalore/use-hub-for-docker-installation.html">
-            Set up JetBrains Hub
-          </a>
-        </td>
-        <td>Used to integrate an authentication service</td>
-      </tr>
-      <tr>
-        <td><a href="https://www.jetbrains.com/help/datalore/enable-gift-codes-docker.html">Enable gift codes</a></td>
-        <td>Used to enable a service generating and distributing gift codes</td>
-      </tr>
-      <tr>
-        <td>
-          <a href="https://www.jetbrains.com/help/datalore/enable-email-service-docker.html">
-            Enable email service
-          </a>
-        </td>
-        <td>Used to activate email notifications</td>
-      </tr>
-      <tr>
-        <td>
-          <a href="https://www.jetbrains.com/help/datalore/enable-user-activity-logging-docker-installation.html">
-            Enable user activity logging
-          </a>
-        </td>
-        <td>Used to set up auditing of your Datalore users</td>
-      </tr>
-    </table>
-    <p>
-      We also recommend referring to
-      <a href="https://www.jetbrains.com/help/datalore/server-configuration.html">this page</a>
-      for the full list of Datalore server configuration options.
-    </p>
-  </chapter>
-  <chapter title="Keywords" id="keywords">
-    <p>
-      <b>Datalore installation</b>,
-      <b>Datalore deployment</b>,
-      <b>install Datalore</b>,
-      <b>installation procedures</b>,
-      <b>installation requirements</b>,
-      <b>Docker deployment</b>
-    </p>
+    <procedure title="Required configuration procedures" type="steps" id="required-configuration-procedures">
+      <step>
+        <a href="https://www.jetbrains.com/help/datalore/configure-docker-agents.html">
+          Configure agents
+        </a>:
+        customize how your agents work to manage your computational resources.
+      </step>
+      <step>
+        <a href="https://www.jetbrains.com/help/datalore/set-up-gpu-machines.html">Set up GPU machines</a>:
+        enable GPU machines in your installation.
+      </step>
+      <step>
+        <a href="manage-users.topic">Create users</a>:
+        create and manage users and viewers.
+      </step>
+      <step>
+        <a href="https://www.jetbrains.com/help/datalore/configure-plans-docker.html">
+          Configure plans
+        </a>:
+        customize resource usage among your Datalore users.
+      </step>
+    </procedure>
+    <procedure title="Optional configuration procedures" type="choices" id="optional-configuration-procedures">
+      <step>
+        <a href="https://www.jetbrains.com/help/datalore/customize-or-update-environment.html">
+          Customize or update environment
+        </a>:
+        create multiple base environments out of custom Docker images.
+      </step>
+      <step>
+        <a href="https://www.jetbrains.com/help/datalore/use-hub-for-docker-installation.html">
+          Set up JetBrains Hub
+        </a>: integrate an authentication service.
+      </step>
+      <step>
+        <a href="https://www.jetbrains.com/help/datalore/enable-gift-codes-docker.html">
+          Enable gift codes
+        </a>: enable a service generating and distributing gift codes.
+      </step>
+      <step>
+        <a href="https://www.jetbrains.com/help/datalore/enable-email-service-docker.html">
+          Enable email service
+        </a>: activate email notifications.
+      </step>
+      <step>
+        <a href="https://www.jetbrains.com/help/datalore/enable-user-activity-logging-docker-installation.html">
+          Enable user activity logging
+        </a>: set up auditing your Datalore users.
+      </step>
+    </procedure>
   </chapter>
 </topic>

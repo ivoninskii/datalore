@@ -4,309 +4,303 @@
        xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
        id="datalore-on-premises"
        title="Install Datalore On-Premises">
+  <show-structure for="chapter,def,procedure" />
   <title>Install Datalore On-Premises</title>
   <p>
-    This page is an overview of Datalore On-Premises installation options. You can skip it and advance directly to the
-    installation topics. However, we recommend reading this page to get a better idea of the entire process.
+    This page provides an overview of the Datalore On-Premises installation process
+    and helps you choose between the Docker-based and Kubernetes-based installation methods.
+    Even if you already know which of the methods you plan to use,
+    we recommend that you read this page to get a better idea of the entire process.
   </p>
   <chapter title="Installation process overview" id="installation-process-overview">
-    <tip>
-      Normally, a greenfield Datalore deployment should take around an hour, if no unforeseen infrastructure-related
-      issues occur during the procedure.
-    </tip>
-    <p>The installation workflow comprises the following stages:</p>
-    <list>
+    <p>The installation process consists of the following steps:</p>
+    <list type="decimal">
       <li>
         <a href="#infrastructure-preparation-and-installation-method-selection">
-          Infrastructure preparation and installation method
+          Choosing the installation method and preparing the infrastructure
         </a>
       </li>
-      <li><a href="#basic-installation">Basic installation and installation method</a></li>
-      <li><a href="#configuration-procedures">Required and optional configuration procedures</a></li>
-      <li><a href="#upgrade-your-version">Upgrade procedure</a></li>
+      <li><a href="#basic-installation">Installing Datalore On-Premises and creating the first user</a></li>
+      <li><a href="#configuration-procedures">Configuring Datalore On-Premises</a></li>
     </list>
-    <chapter title="Infrastructure preparation and installation method selection"
-             id="infrastructure-preparation-and-installation-method-selection">
-      <warning>
-        Currently, we only support 64-bit Linux as a host system.
-        <b>ARM-based platforms, MacOS and Windows are not supported at the moment</b>.
-      </warning>
-      <p>
-        Before the installation of Datalore On-Premises itself, prepare the platform where you want to deploy it.
-        Once the platform is prepared, select your installation method:
-      </p>
-      <list>
-        <li><a href="install-datalore-on-premises-using-kubernetes-helm.topic">Kubernetes-based installation</a></li>
-        <li><a href="install-datalore-on-premises-using-docker.topic">Docker-based installation</a></li>
-      </list>
-      <p>Refer to the table below to consider your infrastructure options and compare the two installation methods.</p>
-      <table>
-        <tr>
-          <td></td>
-          <td>Docker deployment</td>
-          <td>Kubernetes deployment</td>
-        </tr>
-        <tr>
-          <td>Platform</td>
-          <td colspan="2">
-            <p>The following options are suitable for both methods:</p>
-            <list>
-              <li><a href="https://docs.aws.amazon.com/">Amazon Web Service (AWS)</a></li>
-              <li><a href="https://learn.microsoft.com/en-us/azure/?product=popular">Azure</a></li>
-              <li><a href="https://cloud.google.com/docs">Google Cloud Platform</a></li>
-              <li><a href="https://phoenixnap.com/bare-metal-cloud">Bare Metal Cloud</a></li>
-              <li>On-premises server</li>
-            </list>
-          </td>
-        </tr>
-        <tr>
-          <td>General information</td>
-          <td>
-            <p><a href="https://docs.docker.com/compose/">Docker Compose</a> method</p>
-            <p>This method is recommended unless you specifically want to use a Kubernetes cluster.</p>
-            <p>
-              If you have not decided which platform or service to choose yet,
-              we recommend that you try installing Datalore On-Premises on an AWS EC2 instance.
-              Refer to
-              <a href="https://aws.amazon.com/getting-started/guides/deploy-webapp-ec2/">this guide</a>
-              to learn how to create your own infrastructure in AWS.
-            </p>
-          </td>
-          <td>
-            <p><a href="https://helm.sh/docs/">Helm charts</a> method</p>
-            <p>
-              Besides creating and running a cluster directly on a virtual machine (eg. EC2 instance),
-              you can use dedicated Kubernetes services:</p>
-            <list>
-              <li><a href="https://aws.amazon.com/eks/">Elastic Kubernetes Service for AWS (EKS)</a></li>
-              <li><a href="https://learn.microsoft.com/en-us/azure/aks/">Azure Kubernetes Service</a></li>
-              <li><a href="https://cloud.google.com/kubernetes-engine">Google Kubernetes Engine</a></li>
-            </list>
-          </td>
-        </tr>
-        <tr>
-          <td>Key differences</td>
-          <td colspan="2">
-            <list>
-              <li>
+    <tip>
+      Deploying and configuring Datalore from scratch usually takes around an hour.
+      However, it can take longer if you encounter infrastructure-related issues.
+    </tip>
+  </chapter>
+  <chapter title="Installation method and infrastructure"
+           id="infrastructure-preparation-and-installation-method-selection">
+    <warning>
+      Datalore On-Premises only supports 64-bit Linux as a host system.
+      <b>ARM-based platforms, macOS and Windows are not supported at the moment</b>.
+    </warning>
+    <p>
+      Before you start
+      Before the installation of Datalore On-Premises itself, prepare the platform where you want to deploy it.
+      Once the platform is prepared, select your installation method:
+    </p>
+    <list>
+      <li><a href="install-datalore-on-premises-using-kubernetes-helm.topic">Kubernetes-based installation</a></li>
+      <li><a href="install-datalore-on-premises-using-docker.topic">Docker-based installation</a></li>
+    </list>
+    <p>For a comparison of the two methods, refer to the following sections.</p>
+    <deflist>
+      <def title="General information" id="general-information">
+        <table>
+          <tr>
+            <td>Docker deployment</td>
+            <td>Kubernetes deployment</td>
+          </tr>
+          <tr>
+            <td>
+              <p>
                 Docker-based installation is quicker and easier,
-                which makes it more suitable for a wider range of customers
-              </li>
-              <li>
-                Kubernetes deployment allows you to use several machines in your Datalore infrastructure
+                making it more suitable if you are building a proof of concept
+                or want to minimize effort spent on managing infrastructure.
+              </p>
+              <p>This deployment method uses <a href="https://docs.docker.com/compose/">Docker Compose</a></p>
+              <tip>
+                <p>
+                  If you're still undecided about which platform or service to choose,
+                  we recommend installing Datalore On-Premises on an AWS EC2 instance.
+                </p>
+                <p>
+                  To learn how to deploy applications in AWS, see
+                  <a href="https://aws.amazon.com/getting-started/guides/deploy-webapp-ec2/">Deploy a web app on EC2</a>.
+                </p>
+              </tip>
+            </td>
+            <td>
+              <p>
+                Kubernetes deployment allows you to use multiple machines in your Datalore infrastructure
                 and control your computational resources.
-              </li>
-            </list>
-          </td>
-        </tr>
-        <tr>
-          <td>Hardware requirements</td>
-          <td colspan="2">
-            <list>
-              <li>
-                <p>Datalore server:</p>
+              </p>
+              <p>This deployment method uses <a href="https://helm.sh/docs/">Helm charts</a></p>
+              <tip>
+                <p>
+                  You can create a Kubernetes cluster either directly on a virtual machine
+                  (for example, an EC2 instance) or by using a managed Kubernetes service, such as:
+                </p>
                 <list>
-                  <li>CPU: minimum of 4 cores</li>
-                  <li>RAM: minimum 4GB, recommended 8GB or higher</li>
+                  <li><a href="https://aws.amazon.com/eks/">Elastic Kubernetes Service (EKS) on AWS </a></li>
+                  <li><a href="https://learn.microsoft.com/en-us/azure/aks/">Azure Kubernetes Service (AKS)</a></li>
+                  <li><a href="https://cloud.google.com/kubernetes-engine">Google Kubernetes Engine (GKE)</a></li>
                 </list>
-              </li>
-              <li>Computations</li>
+              </tip>
+            </td>
+          </tr>
+        </table>
+      </def>
+      <def title="Platform" id="platform">
+        <p>You can use both Docker and Kubernetes deployments on the following platforms:</p>
+        <list>
+          <li><a href="https://docs.aws.amazon.com/">Amazon Web Service (AWS)</a></li>
+          <li><a href="https://learn.microsoft.com/en-us/azure/?product=popular">Azure</a></li>
+          <li><a href="https://cloud.google.com/docs">Google Cloud Platform</a></li>
+          <li><a href="https://phoenixnap.com/bare-metal-cloud">Bare Metal Cloud</a></li>
+          <li>On-premises server</li>
+        </list>
+      </def>
+      <def title="Hardware requirements" id="hardware-requirements">
+        <p>
+          Datalore On-Premises requires resources for running both the server, database, and computations.
+          When choosing the amount of resources,
+          take into account your projected computations and the number of agents working in parallel.
+        </p>
+        <list>
+          <li>
+            <p>Datalore server:</p>
+            <list>
+              <li>CPU: minimum of 4 cores</li>
+              <li>RAM: minimum 4GB, recommended 8GB or higher</li>
             </list>
-            <warning>
-              Your projected computations and number of agents working in parallel must be one of the main factors when
-              calculating system requirements for your installation.
-            </warning>
-            <p>
-              Because users have different needs and projects, we can only suggest a simplified formula for you to get a
-              better idea of how calculating this value can be done:
-            </p>
+          </li>
+          <li>
+            <p>Computations:</p>
+            <p>You can estimate the required amount of RAM using the following formula:</p>
             <code-block>
               4 * (N + 1)
             </code-block>
-            <p>where N is the number of projected users, each working on one document.</p>
-            <p>For example, for a team of 10 people working as described above, you will need at least 44 GB of RAM.</p>
-          </td>
-        </tr>
-        <tr>
-          <td>System requirements</td>
-          <td>
-            <list>
-              <li>Docker</li>
-              <li>Docker Compose v2.21.0 or greater</li>
-              <li><p>PostgreSQL <b>15</b> database</p>
-                <list>
-                  <li>CPU: 1 core minimum, 2+ recommended</li>
-                  <li>RAM: 4 GB minimum, 8 GB recommended</li>
-                  <li>4 GB minimum available for database, 6+GB recommended</li>
-                </list>
-              </li>
-            </list>
-          </td>
-          <td>
-            <list>
-              <li>k8s cluster (with minimum of 1 machine available for scheduling the workload pods)</li>
-              <li>Kubectl on your machine pointed to this cluster</li>
-              <li>Helm</li>
-              <li>
-                <p>PostgreSQL <b>15</b> database:</p>
-                <list>
-                  <li>CPU: 1 core minimum, 2+ recommended</li>
-                  <li>RAM: 4 GB minimum, 8 GB recommended</li>
-                  <li>4 GB minimum available for database, 6+GB recommended</li>
-                </list>
-              </li>
-            </list>
-            <p>
-              Current release of Datalore was tested with Kubernetes v1.30 and Helm v3.15.2,
-              but other versions may work too.
-            </p>
-          </td>
-        </tr>
-      </table>
-      <note>
-        To learn more about the necessary Postgres permissions,
-        refer to <a href="https://www.jetbrains.com/help/datalore/security.html#database-permissions">Database</a>.
-      </note>
-    </chapter>
-    <chapter title="Basic installation" id="basic-installation">
-      <p>
-        The next stage is the basic installation procedure
-        that allows you to get Datalore On-Premises up and running on the infrastructure of your choice.
-        Follow one of the guides below to use the method you selected.
-      </p>
-      <list>
-        <li><a href="install-datalore-on-premises-using-docker.topic">Docker-based installation</a></li>
-        <li><a href="install-datalore-on-premises-using-kubernetes-helm.topic">Kubernetes-based installation</a></li>
-      </list>
-      <p>
-        As a result, you will have Datalore On-Premises installed and ready for use,
-        as well as your first signed-up Datalore user, who will have the administrator rights.
-      </p>
-    </chapter>
-    <chapter title="Configuration procedures" id="configuration-procedures">
-      <p>Whichever basic installation method you choose, it is followed by a set of configuration procedures.</p>
-      <p>
-        The table below lists all configuration procedures.
-        Unless noted otherwise, a procedure is applicable for both installation methods.
-      </p>
-      <table>
-        <tr>
-          <td>Procedure</td>
-          <td>Description</td>
-        </tr>
-        <tr>
-          <td><b>Required</b></td>
-          <td></td>
-        </tr>
-        <tr>
-          <td>
-            <b>Configure agents</b> (<a href="https://www.jetbrains.com/help/datalore/configure-docker-agents.html">Docker</a>
-            | <a href="https://www.jetbrains.com/help/datalore/configure-agents-helm-installation.html">Helm</a>)
-          </td>
-          <td>Used to customize how your agents work to manage your computational resources</td>
-        </tr>
-        <tr>
-          <td>
-            <b>Set up GPU machines</b>
-            (
-            <a href="https://www.jetbrains.com/help/datalore/set-up-gpu-machines.html">Docker</a>
-            |
-            <a href="https://www.jetbrains.com/help/datalore/set-up-gpu-machines-k8s.html">Helm</a>
-            )
-          </td>
-          <td>Used to enable GPU machines</td>
-        </tr>
-        <tr>
-          <td>
-            <b>Configure plans</b>
-            (
-            <a href="https://www.jetbrains.com/help/datalore/configure-plans-docker.html">Docker</a>
-            |
-            <a href="https://www.jetbrains.com/help/datalore/configure-plans-helm-installation.html">Helm</a>
-            )
-          </td>
-          <td>Used to customize resource usage among your Datalore users</td>
-        </tr>
-        <tr>
-          <td><b>Optional</b></td>
-          <td></td>
-        </tr>
-        <tr>
-          <td>
-            <a href="https://www.jetbrains.com/help/datalore/customize-or-update-environment.html">
-              Customize or update environment
-            </a>
-          </td>
-          <td>Used to create multiple base environments out of custom Docker images</td>
-        </tr>
-        <tr>
-          <td>
-            <b>Set up JetBrains Hub</b>
-            (
-            <a href="https://www.jetbrains.com/help/datalore/use-hub-for-docker-installation.html">Docker</a>
-            |
-            <a href="https://www.jetbrains.com/help/datalore/use-hub-for-helm-installation.html">Helm</a>
-            )
-          </td>
-          <td>Used to integrate an authentication service</td>
-        </tr>
-        <tr>
-          <td>
-            <b>Enable gift codes</b>
-            (
-            <a href="https://www.jetbrains.com/help/datalore/enable-gift-codes-docker.html">Docker</a>
-            |
-            <a href="https://www.jetbrains.com/help/datalore/enable-gift-codes-helm-installation.html">Helm</a>
-            )
-          </td>
-          <td>Used to enable a service generating and distributing gift codes</td>
-        </tr>
-        <tr>
-          <td>
-            <b>Enable email service</b>
-            (
-            <a href="https://www.jetbrains.com/help/datalore/enable-email-service-docker.html">Docker</a>
-            |
-            <a href="https://www.jetbrains.com/help/datalore/enable-email-service-helm-installation.html">Helm</a>
-            )
-          </td>
-          <td>Used to activate email notifications</td>
-        </tr>
-        <tr>
-          <td>
-            <b>Enable user activity logging</b>
-            (
-            <a href="https://www.jetbrains.com/help/datalore/enable-user-activity-logging-docker-installation.html">
-              Docker
-            </a>
-            |
-            <a href="https://www.jetbrains.com/help/datalore/enable-user-activity-logging-helm-installation.html">
-              Helm
-            </a>
-            )
-          </td>
-          <td>Used to set up auditing of your Datalore users</td>
-        </tr>
-      </table>
-    </chapter>
-    <chapter title="Upgrade your version" id="upgrade-your-version">
-      <p>Each installation method has its own upgrade procedure:</p>
-      <list>
-        <li>
-          <a href="https://www.jetbrains.com/help/datalore/upgrade-datalore-on-premises-docker-installation.html">
-            Upgrade Datalore in Docker deployment
-          </a>
-        </li>
-        <li>
-          <a href="https://www.jetbrains.com/help/datalore/upgrade-datalore-on-premises-helm-installation.html">
-            Upgrade Datalore in Kubernetes deployment
-          </a>
-        </li>
-      </list>
-      <p>
-        We duly notify our customers of new version releases so they can promptly upgrade.
-        Generally, upgrading a Docker-based installation is quicker and easier than the Kubernetes-based one.
-      </p>
-    </chapter>
+            <p>where <code>N</code> is the number of projected users, each working on one document.</p>
+            <p>For example, for a team of 10 people working as described above, you need at least 44 GB of RAM.</p>
+            <note>
+              This is a simplified formula intended to provide you with an idea of how to calculate resources.
+              Your installation may require a different amount of resources depending on your projects and needs.
+            </note>
+          </li>
+        </list>
+      </def>
+      <def title="System requirements" id="system-requirements">
+        <p>Datalore On-Premises requires resources for running both the server, database, and computations.</p>
+        <table>
+          <tr>
+            <td>Docker deployment</td>
+            <td>Kubernetes deployment</td>
+          </tr>
+          <tr>
+            <td>
+              <list>
+                <li>Docker</li>
+                <li>Docker Compose v2.21.0 or greater</li>
+                <li>
+                  <p>PostgreSQL <b>15</b> database:</p>
+                  <list>
+                    <li>CPU: minimum 1 core; 2 or more cores recommended</li>
+                    <li>RAM: minimum 4 GB; 8 GB recommended</li>
+                    <li>Available memory: minimum 4 GB minimum, 6GB or more recommended</li>
+                  </list>
+                </li>
+              </list>
+            </td>
+            <td>
+              <list>
+                <li>Kubernetes cluster with minimum of 1 machine available for scheduling the workload pods</li>
+                <li>Kubectl on your machine pointed to this cluster</li>
+                <li>Helm</li>
+                <li>
+                  <p>PostgreSQL <b>15</b> database:</p>
+                  <list>
+                    <li>CPU: minimum 1 core; 2 or more cores recommended</li>
+                    <li>RAM: minimum 4 GB; 8 GB recommended</li>
+                    <li>Available memory: minimum 4 GB minimum, 6GB or more recommended</li>
+                  </list>
+                </li>
+              </list>
+              <tip>
+                The current Datalore release was tested with Kubernetes v1.30 and Helm v3.15.2.
+                Other versions may work too
+              </tip>
+            </td>
+          </tr>
+        </table>
+        <note>
+          To learn more about the necessary Postgres permissions,
+          refer to <a href="https://www.jetbrains.com/help/datalore/security.html#database-permissions">Database</a>.
+        </note>
+      </def>
+    </deflist>
+  </chapter>
+  <chapter title="Installation" id="basic-installation">
+    <p>
+      After you've chosen the installation method,
+      continue with the corresponding instructions to deploy Datalore On-Premises
+      and create the first super admin user.
+    </p>
+    <list>
+      <li>
+        <a href="install-datalore-on-premises-using-docker.topic">
+          Install Datalore On-Premises using Docker Compose
+        </a>
+      </li>
+      <li>
+        <a href="install-datalore-on-premises-using-kubernetes-helm.topic">
+          Install Datalore On-Premises using Kubernetes with Helm
+        </a>
+      </li>
+    </list>
+  </chapter>
+  <chapter title="Configuration" id="configuration-procedures">
+    <p>
+      Once you have your Datalore installation up and running, you need to configure it for your workload and needs.
+    </p>
+    <p>Unless otherwise noted, configuration procedures are applicable to both installation methods.</p>
+    <procedure title="Required configuration procedures" type="steps" id="required-configuration-procedures">
+      <step>
+        Configure agents
+        (
+        <a href="https://www.jetbrains.com/help/datalore/configure-docker-agents.html">Docker</a>
+        |
+        <a href="https://www.jetbrains.com/help/datalore/configure-agents-helm-installation.html">Kubernetes</a>
+        ): customize how your agents work to manage your computational resources.
+      </step>
+      <step>
+        Set up GPU machines
+        (
+        <a href="https://www.jetbrains.com/help/datalore/set-up-gpu-machines.html">Docker</a>
+        |
+        <a href="https://www.jetbrains.com/help/datalore/set-up-gpu-machines-k8s.html">Kubernetes</a>
+        ): enable GPU machines in your installation.
+      </step>
+      <step>
+        Create users
+        (<a href="manage-users.topic">All installations</a>):
+        create and manage users and viewers.
+      </step>
+      <step>
+        Configure plans
+        (
+        <a href="https://www.jetbrains.com/help/datalore/configure-plans-docker.html">Docker</a>
+        |
+        <a href="https://www.jetbrains.com/help/datalore/configure-plans-helm-installation.html">Kubernetes</a>
+        ): customize resource usage among your Datalore users.
+      </step>
+    </procedure>
+    <procedure title="Optional configuration procedures" type="choices" id="optional-configuration-procedures">
+      <step>
+        Customize or update environment
+        (
+        <a href="https://www.jetbrains.com/help/datalore/customize-or-update-environment.html">
+          All installations
+        </a>): create multiple base environments out of custom Docker images.
+      </step>
+      <step>
+        Set up JetBrains Hub
+        (
+        <a href="https://www.jetbrains.com/help/datalore/use-hub-for-docker-installation.html">Docker</a>
+        |
+        <a href="https://www.jetbrains.com/help/datalore/use-hub-for-helm-installation.html">Kubernetes</a>
+        ): integrate an authentication service.
+      </step>
+      <step>
+        Enable gift codes
+        (
+        <a href="https://www.jetbrains.com/help/datalore/enable-gift-codes-docker.html">Docker</a>
+        |
+        <a href="https://www.jetbrains.com/help/datalore/enable-gift-codes-helm-installation.html">Kubernetes</a>
+        ): enable a service generating and distributing gift codes.
+      </step>
+      <step>
+        Enable email service
+        (
+        <a href="https://www.jetbrains.com/help/datalore/enable-email-service-docker.html">Docker</a>
+        |
+        <a href="https://www.jetbrains.com/help/datalore/enable-email-service-helm-installation.html">Kubernetes</a>
+        ): activate email notifications.
+      </step>
+      <step>
+        Enable user activity logging
+        (
+        <a href="https://www.jetbrains.com/help/datalore/enable-user-activity-logging-docker-installation.html">
+          Docker
+        </a>
+        |
+        <a href="https://www.jetbrains.com/help/datalore/enable-user-activity-logging-helm-installation.html">
+          Kubernetes
+        </a>
+        ): set up auditing your Datalore users.
+      </step>
+    </procedure>
+  </chapter>
+  <chapter title="Upgrading Datalore version" id="upgrade-your-version">
+    <p>
+      When a new Datalore version is released, you get notified by email,
+      so that you can upgrade your installation and benefit from the new features right away.
+    </p>
+    <p>Each installation method has its own upgrade procedure:</p>
+    <list>
+      <li>
+        <a href="https://www.jetbrains.com/help/datalore/upgrade-datalore-on-premises-docker-installation.html">
+          Upgrade Datalore in Docker
+        </a>
+      </li>
+      <li>
+        <a href="https://www.jetbrains.com/help/datalore/upgrade-datalore-on-premises-helm-installation.html">
+          Upgrade Datalore in Kubernetes
+        </a>
+      </li>
+    </list>
+    <tip>
+      Upgrading Datalore running in Docker is usually quicker and easier than in Kubernetes.
+    </tip>
   </chapter>
 </topic>

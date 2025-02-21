@@ -6,8 +6,8 @@
                   name="Datalore"
                   start-page="datalore-on-premises.topic">
     <toc-element topic="datalore-on-premises.topic">
-        <toc-element topic="install-datalore-on-premises-using-kubernetes-helm.topic"/>
-        <toc-element topic="install-datalore-on-premises-using-docker.topic"/>
+        <toc-element toc-title="Install on a Kubernetes cluster with Helm" topic="install-datalore-on-premises-using-kubernetes-helm.topic"/>
+        <toc-element toc-title="Install in a Docker container with Docker Compose" topic="install-datalore-on-premises-using-docker.topic"/>
     </toc-element>
     <toc-element topic="manage-users.topic"/>
 </instance-profile>

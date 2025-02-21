@@ -4,95 +4,93 @@
        xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
        id="install-datalore-on-premises-using-kubernetes-helm"
        title="Install on a Kubernetes cluster using Helm charts">
-  <title>Install on a Kubernetes cluster using Helm charts</title>
+  <show-structure for="chapter,def,procedure" />
+  <title>Install Datalore On-Premises on a Kubernetes cluster with Helm charts</title>
   <p>
-    The instructions in this article describe the installation of Datalore On-Premises
-    on a Kubernetes cluster using Helm.
-  </p>
-  <p>
-    The chapters in this section describe the processes of installing, configuring,
-    and updating Datalore On-Premises in Kubernetes deployment (Helm charts method).
+    The page guides you through installing and configuring Datalore On-Premises on a Kubernetes cluster
+    on the platform of your choice.
   </p>
   <tip>
-    We recommend that you use this method
-    if you specifically want to install Datalore On-Premises on Kubernetes cluster
-    and good knowledge of this technology.
+    <p>We recommend using this installation method only if you need Kubernetes
+      and have a solid understanding of both Kubernetes and Helm.</p>
+    <p>
+      If you are building a proof of concept or do not have strict platform requirements,
+      use a more simple and straightforward method
+      <a href="install-datalore-on-premises-using-docker.topic">using Docker Compose</a>.
+    </p>
   </tip>
-  <warning>
-    Currently, we only support Linux as a host system. MacOS and Windows are NOT supported at the moment.
-  </warning>
-  <p>This is what Kubernetes-based setup for Datalore looks like:</p>
+  <p>Kubernetes deployment of Datalore On-Premises contains the following components:</p>
   <img src="k8s.png" alt="Kubernetes-based Datalore setup" width="706"/>
-  <p>You will learn how to do the following:</p>
+  <p>The installation process consists of two parts:</p>
   <list>
     <li>
-      <a href="#basic-datalore-installation_helm">
-        Basic installation
-      </a>:
-      You complete the basic procedure to get Datalore On-Premises up and running on the infrastructure of your choice.
+      <a href="#basic-datalore-installation_helm">Basic installation</a>:
+      to get Datalore On-Premises up and running on the platform of your choice.
     </li>
     <li>
       <a href="https://www.jetbrains.com/help/datalore/configuration-options-helm.html">
-        Required and optional configuration procedures
+        Configuration procedures
       </a>:
-      You customize and configure Datalore On-Premises.
-      Some of these configurations are essential for you to start working on your projects.
-    </li>
-    <li>
-      <a href="https://www.jetbrains.com/help/datalore/upgrade-datalore-on-premises-helm-installation.html">
-        Upgrade procedure
-      </a>:
-      You upgrade your version of Datalore On-Premises. We duly notify you of our new releases.
+      to customize the installation.
+      Some of these configurations are necessary to begin using Datalore after installation.
     </li>
   </list>
-  <p>
-    It is highly recommended that you have experience using the Kubernetes technology, particularly Helm.
-    For the PoC purpose, we suggest trying the Docker-based installation.
-  </p>
-  <warning>
-    Currently, we only support 64-bit Linux as a host system.
-    <b>ARM-based platforms, MacOS and Windows are not supported at the moment</b>.
-  </warning>
+  <include from="snippets.topic" element-id="supported-platforms" />
   <deflist>
     <def title="Prerequisites" id="prerequisites">
-      <p>Before installation, make sure that you have the following:</p>
+      <p>Before you start, make sure that you have the following:</p>
       <list>
-        <li>Kubernetes cluster</li>
+        <li>A Kubernetes cluster</li>
         <li><code>kubectl</code> installed on your machine and configured to work with this cluster</li>
         <li>Helm</li>
       </list>
       <p>This installation was tested with Kubernetes v1.30 and Helm v3.15, but other versions may work too.</p>
       <note>
-        If you use a reverse proxy, we recommend that you enable gzip compression by following
-        <a href="https://nginx.org/en/docs/http/ngx_http_gzip_module.html">this instruction</a>.
+        If you're using a reverse proxy, we recommend that you enable Gzip compression by following
+        <a href="https://nginx.org/en/docs/http/ngx_http_gzip_module.html">these instructions</a>.
       </note>
     </def>
     <def title="Hardware requirements" id="hardware-requirements">
+      <p>
+        Datalore On-Premises requires resources for running both the server, database, and computations.
+        When choosing the amount of resources,
+        take into account your projected computations and the number of agents working in parallel.
+      </p>
       <list>
-        <li>Datalore server machine: 4GB of RAM (the number of CPU is irrelevant if the load is not high)</li>
-        <li>For every concurrently run notebook: from 4GB of RAM</li>
+        <li>Datalore server: 4GB of RAM (the number of CPU is irrelevant if the load is not high)</li>
+        <li>For every running notebook: from 4GB of RAM</li>
+        <li>
+          <p>PostgreSQL <b>15</b> database:</p>
+          <list>
+            <li>CPU: minimum 1 core; 2 or more cores recommended</li>
+            <li>RAM: minimum 4 GB; 8 GB recommended</li>
+            <li>Available memory: minimum 4 GB minimum, 6GB or more recommended</li>
+          </list>
+        </li>
       </list>
     </def>
   </deflist>
   <procedure title="AWS EKS deployment limitations" type="choices" id="aws-eks-deployment-limitations">
     <p>
       Datalore's <a href="https://www.jetbrains.com/help/datalore/use-reactive-mode.html">Reactive mode</a>
-      may not operate properly on an Amazon EKS cluster with the Amazon Linux (default option) compute nodes.
+      may not operate properly on an Amazon EKS cluster with the Amazon Linux compute nodes (default option).
       We recommend that you use Ubuntu 20.04 with the corresponding AMIs specifically designed for the EKS.
     </p>
-    <p>Here are our tips for AWS EKS deployments:</p>
+    <p>Essential tips for AWS EKS deployments:</p>
     <step>
-      To find an AMI for manual setup, follow <a href="https://cloud-images.ubuntu.com/docs/aws/eks/">this link</a>
-      and select your option based on the cluster version and region.
+      To find an AMI for manual setup, select a suitable option from the
+      <a href="https://cloud-images.ubuntu.com/docs/aws/eks/">worker node image list</a>
+      based on the cluster version and region.
     </step>
     <step>
-      To configure the cluster deployment using Terraform, you can refer to this
-      <a href="https://github.com/JetBrains/datalore-configs/blob/main/terraform/eks/main.tf">sample file</a>.
+      To configure the cluster deployment using Terraform, you can use the
+      <a href="https://github.com/JetBrains/datalore-configs/blob/main/terraform/eks/main.tf">
+        sample Terraform config file
+      </a>.
     </step>
   </procedure>
   <chapter title="Basic Datalore installation" id="basic-datalore-installation_helm">
-    <p>Follow the instruction to install Datalore using Helm.</p>
-    <procedure title="Install Datalore" id="install-datalore">
+    <procedure title="Install Datalore using Helm charts" id="install-datalore">
       <step>
         <p>Add the Datalore Helm repository:</p>
         <code-block lang="bash">helm repo add datalore https://jetbrains.github.io/datalore-configs/charts</code-block>
@@ -100,17 +98,17 @@
       <step>Create a <path>datalore.values.yaml</path> file.</step>
       <step>
         <p>
-          Create a Kubernetes secret for storing the database password securely. See
+          Create a Kubernetes secret to securely store the database password.
+          For details, see
           <a href="https://www.jetbrains.com/help/datalore/security.html#use-kubernetes-native-secrets-for-storing-the-database-password">
             Use Kubernetes native secrets for storing a database password
-          </a>
-          for further guidance.
+          </a>.
         </p>
         <tip>
           <p>
-            Another option is to specify the password in the Helm config file.
-            In <path>datalore.values.yaml</path>,
-            add a <code>databaseSecret</code> parameter to set up your database password, as in an example below.
+            An alternative is to specify the password in the Helm configuration file.
+            In the <path>datalore.values.yaml</path> file,
+            add a <code>databaseSecret</code> parameter for your database password, as in this example:
           </p>
           <code-block lang="yaml">
             databaseSecret:
@@ -119,7 +117,7 @@
         </tip>
       </step>
       <step>
-        <p>Configure your volumes. In <path>datalore.values.yaml</path>, add the following parameters:</p>
+        <p>Configure your volumes. In the <path>datalore.values.yaml</path> file, add the following parameters:</p>
         <code-block lang="yaml">
           volumes:
             - name: storage
@@ -132,16 +130,16 @@
           <li><code>storage</code>: contains workbook data, such as attached files (UID:GID 5000:5000).</li>
           <li><code>postgresql-data</code>: contains PostgreSQL database data (UID:GID 999:999).</li>
         </list>
-        <note title="Important">
+        <note>
           Make sure
           that you back up the content of the <code>storage</code> and <code>postgresql-data</code> volumes regularly.
         </note>
-        <p>Below are exemplary procedures of configuring your volumes:</p>
+        <p>The following are example procedures for configuring your volumes:</p>
         <p><b>Configure hostPath volumes</b></p>
         <list>
           <li>
-            <p>Create directories:</p>
-            <code-block>
+            <p>Create directories and change their ownership:</p>
+            <code-block lang="bash">
               mkdir -p /data/postgresql
               mkdir -p /data/datalore
               chown 999:999 /data/postgresql
@@ -149,7 +147,7 @@
             </code-block>
           </li>
           <li>
-            <p>Add to datalore.values.yaml:</p>
+            <p>Add the block to <path>datalore.values.yaml</path>:</p>
             <code-block lang="yaml">
               volumes:
                 - name: postgresql-data
@@ -190,17 +188,17 @@
       </step>
       <step>
         <p>Run the following command and wait for Datalore to start up:</p>
-        <code-block>
+        <code-block lang="bash">
           helm install -f datalore.values.yaml datalore datalore/datalore --version 0.2.26
         </code-block>
-        <note title="Important">
+        <note>
           <p>
-            You can run <code>kubectl port-forward svc/datalore 8080</code> to test if Datalore can start up.
-            However, to make it accessible, make sure you configure
-            <a href="https://kubernetes.io/docs/concepts/services-networking/ingress/">ingress</a>
-            and install the corresponding ingress controller prior to Datalore deployment.
+            To test if Datalore can start up, you can run <code>kubectl port-forward svc/datalore 8080</code>.
+            However, to make it accessible,
+            <a href="https://kubernetes.io/docs/concepts/services-networking/ingress/">configure ingress</a>
+            and install the corresponding ingress controller before you deploy Datalore.
           </p>
-          <p>Below is a plain http ingress setup example:</p>
+          <p>Plain HTTP ingress setup example:</p>
           <code-block lang="yaml">
             ingress:
             enabled: true
@@ -211,66 +209,65 @@
                     pathType: Prefix
           </code-block>
           <p>
-            Also, when using ingress, use
+            You can adjust file size in your configuration using the
             <a href="https://github.com/kubernetes/ingress-nginx/blob/main/docs/user-guide/nginx-configuration/annotations.md#custom-max-body-size">
-              this annotation
-            </a>
-            to adjust file size in your configuration.
+              <code>proxy-body-size</code> annotation
+            </a>.
           </p>
         </note>
       </step>
       <step>
         <p>
-          Go to <path>http://127.0.0.1:8080/</path> and sign up the first user.
-          The first signed-up user will automatically receive admin rights.
+          Go to <path>http://127.0.0.1:8080/</path> and register the first user.
+          This user automatically receives the Super Admin role.
         </p>
         <tip>
-          Unless the email service is configured, there is no registration confirmation. You can log in right after
-          providing the credentials.
+          Unless the email service is configured, Datalore On-Premises sends no registration confirmation.
+          You can log in right after you register.
         </tip>
       </step>
       <step>
         <p>
-          To access Datalore by a domain other than 127.0.0.1,
-          add a URL with this host as the <code>DATALORE_PUBLIC_URL</code> parameter
-          in the <path>datalore.values.yaml</path> file.
+          Add your licence. To do that, click your avatar in the upper right corner,
+          select <ui-path>Admin panel | License</ui-path>, and enter your license key.
         </p>
-        <p>
-          For example, if you want to use the <path>https://datalore.yourcompany.com domain</path>, add the following:
-        </p>
-        <code-block lang="yaml">
-          dataloreEnv:
-            ...
-            DATALORE_PUBLIC_URL: "https://datalore.yourcompany.com"
-        </code-block>
-        <tip>
-          <list>
-            <li>Make sure the URL does not contain a trailing slash.</li>
-            <li>You will need to configure your DNS yourself.</li>
-          </list>
-        </tip>
-      </step>
-      <step>
-        <p>
-          Once logged in, the license should be installed. Click your avatar in the upper right corner,
-          select <ui-path>Admin panel | License</ui-path> and provide your license key.
-        </p>
-        <img src="dl_admin_panel.png" alt="Opening Admin panel" width="296"/>
+        <img src="admin_panel.png" alt="Opening Admin panel" width="296"/>
       </step>
     </procedure>
   </chapter>
   <chapter title="Optional procedures" id="optional-procedures">
+    <procedure title="Add public URL" type="steps" id="add-public-url">
+      <step>
+        <p>
+          To access Datalore using an address other than <path>127.0.0.1</path>,
+          add a URL without a trailing slash as the <code>DATALORE_PUBLIC_URL</code> parameter
+          in the <path>datalore.values.yaml</path> file.
+        </p>
+        <p>
+          For example, if you want to use <path>https://datalore.yourcompany.com</path>, add the following block:
+        </p>
+        <code-block lang="yaml">
+          dataloreEnv:
+            ...
+            # Make sure the URL doesn't have a trailing slash
+            DATALORE_PUBLIC_URL: "https://datalore.yourcompany.com"
+        </code-block>
+        <note>
+          You need to configure your DNS yourself.
+        </note>
+      </step>
+    </procedure>
     <procedure title="Run Datalore in a non-default namespace" id="run-datalore-in-a-non-default-namespace">
       <step>
         <p>To deploy the Datalore server into a non-default namespace, run the following command:</p>
-        <code-block>
+        <code-block lang="bash">
           helm install -n &lt;non_default_namespace&gt; -f datalore.values.yaml datalore datalore/datalore --version 0.2.26
         </code-block>
       </step>
       <step>
         <p>
           To specify the non-default namespace for your agents configs,
-          define the namespace variable in <path>datalore.values.yaml</path> as shown in the code block below:
+          define the namespace variable in the <path>datalore.values.yaml</path> file as shown in the code block:
         </p>
         <code-block lang="yaml">
           agentsConfig:
@@ -280,13 +277,14 @@
                 ...
         </code-block>
         <p>
-          Find more details about configuring agents in
-          <a href="https://www.jetbrains.com/help/datalore/configure-agents-helm-installation.html">this topic</a>
+          For more details, see
+          <a href="https://www.jetbrains.com/help/datalore/configure-agents-helm-installation.html">Configure agents</a>
         </p>
       </step>
       <step>
         <p>
-          Under <code>dataloreEnv</code> in <path>datalore.values.yaml</path>, you can define the following variables:
+          You can define the following variables in the <path>datalore.values.yaml</path> file
+          under <code>dataloreEnv</code>:
         </p>
         <table>
           <tr>
@@ -299,91 +297,99 @@
             <td><code>DATABASES_K8S_NAMESPACE</code></td>
             <td>String</td>
             <td><code>default</code></td>
-            <td>K8s namespace where all database connector pods will be spawned.</td>
+            <td>Kubernetes namespace where all database connector pods will be spawned.</td>
           </tr>
           <tr>
             <td><code>GIT_TASK_K8S_NAMESPACE</code></td>
             <td>String</td>
             <td><code>default</code></td>
-            <td>K8s namespace where all Git-related task pods will be spawned.</td>
+            <td>Kubernetes namespace where all Git-related task pods will be spawned.</td>
           </tr>
         </table>
         <p>
-          Find the full list of customized server configuration options in this
-          <a href="https://www.jetbrains.com/help/datalore/server-configuration.html">topic</a>.
+          For the full list of customizable options, see
+          <a href="https://www.jetbrains.com/help/datalore/server-configuration.html">Server configuration</a>.
         </p>
       </step>
     </procedure>
-    <procedure title="Use an external postgres database" id="use-an-external-postgres-database">
+    <procedure title="Use an external PostgreSQL database" id="use-an-external-postgres-database">
       <step>
-        <p>Add two variables under dataloreEnv: database user and database URL.</p>
-        <code-block>
+        <p>
+          In the <path>datalore.values.yaml</path> file,
+          add the <code>DB_USER</code> and <code>DB_URL</code> variables under <code>dataloreEnv</code>:
+        </p>
+        <code-block lang="yaml">
           dataloreEnv:
             ...
             DB_USER: "&lt;database_user&gt;"
             DB_URL: "jdbc:postgresql://[database_host]:[database_port]/[database_name]"
         </code-block>
+        <tip>
+          Make sure the Kubernetes secret or Helm configuration file contains the password for the specified database.
+        </tip>
       </step>
       <step>Set <code>internalDatabase</code> to <code>false</code>.</step>
     </procedure>
-    <procedure title="Enable an email whitelist" id="enable-an-email-whitelist">
+    <procedure title="Enable an email allowlist" type="steps" id="enable-an-email-allowlist">
       <p>
-        Enable a whitelist for new user registration. Only users with emails entered to the whitelist can be registered.
+        Enable an allowlist for new user registration.
+        Only users with email addresses included in the allowlist can register.
       </p>
-      <step>Open the <path>values.yaml</path> file.</step>
       <step>
-        <p>Add the following parameter:</p>
-        <code-block>
+        <p>In the <path>values.yaml</path> file, add the following parameter:</p>
+        <code-block lang="yaml">
           dataloreEnv:
             ...
             EMAIL_ALLOWLIST_ENABLED: "true"
         </code-block>
+        <p>
+          The <ui-path>Email allowlist</ui-path> tab will be available on the
+          <a href="https://www.jetbrains.com/help/datalore/manage-email-allowlist.html">Admin panel</a>.
+        </p>
       </step>
-      <p>
-        The respective tab will be available on the
-        <a href="https://www.jetbrains.com/help/datalore/manage-email-allowlist.html">Admin panel</a>.
-      </p>
     </procedure>
     <procedure title="Enable user filtration based on Hub group membership"
+               type="steps"
                id="enable-user-filtration-based-on-hub-group-membership">
       <p>
-        By default, all Hub users can get registеred unless you disable registration on the
+        By default, all Hub users can register unless you disable registration on the
         <a href="https://www.jetbrains.com/help/datalore/manage-users.html">Admin panel</a>.
-        If you want to grant Datalore access only to a specific Hub group members, perform the steps below:
+        To grant Datalore access only to a specific Hub group members:
       </p>
-      <step>Open the <path>values.yaml</path> file.</step>
-      <step>
-        <p>Add the following parameter:</p>
-        <code-block>
+      <step><p>In the <path>values.yaml</path> file, add the following parameter:</p>
+        <code-block lang="yaml">
           dataloreEnv:
             ...
             HUB_ALLOWLIST_GROUP: 'group_name', 'group_name1'
         </code-block>
       </step>
     </procedure>
-    <procedure title="Configure notebook code import limit" id="configure-notebook-code-import-limit">
-      <p>Set your own value in bytes to configure the limit of notebook code import.</p>
-      <step>Open the <path>values.yaml</path> file.</step>
-      <step>
-        <p>Add the following parameter:</p>
-        <code-block>
+    <procedure title="Configure notebook code import limit" type="steps" id="configure-notebook-code-import-limit">
+      <p> You can configure the limit of notebook code import by setting your own value in bytes. To do that:</p>
+      <step><p>In the <path>values.yaml</path> file, add the following parameter:</p>
+        <code-block lang="yaml">
           dataloreEnv:
             VFS_MAX_IMPORT_SOURCE_LENGTH: 'integer, prefixes (K-, M-, etc.) not supported'
       </code-block>
       </step>
     </procedure>
   </chapter>
-  <chapter title="Fargate restrictions" id="fargate-restrictions">
-    <p>While Datalore can operate in Fargate, be aware of the following restrictions:</p>
+  <chapter title="AWS Fargate restrictions" id="fargate-restrictions">
+    <p>AWS Fargate is a serverless compute engine for containers.
+      Datalore On-Premises can run in Fargate, be you need to be aware of the following restrictions:
+    </p>
     <list>
-      <li>Attached files and reactive mode will not work due to Fargate security policies.</li>
-      <li>Spawning agents in privileged mode, as set up by default, is not supported by Fargate.</li>
+      <li>
+        Attached files and <a href="https://www.jetbrains.com/help/datalore/use-reactive-mode.html">Reactive mode</a>
+        do not work due to Fargate's security policies.
+      </li>
+      <li>Spawning agents in privileged mode, which is the default setup, is not supported by Fargate.</li>
       <li>
         <p>
-          Fargate does not support EBS volumes, our default volume option.
-          Currently, as a workaround, we suggest that you have an AWS EFS,
-          create <code>PersistentVolume</code> and <code>PersistenVolumeContainer</code> objects,
-          and edit the <path>values.yaml</path> config file as shown in the example below:
+          Fargate does not support EBS volumes, which are our default volume option.
+          As a workaround, we suggest that you set up an AWS EFS,
+          create <code>PersistentVolume</code> and <code>PersistentVolumeContainer</code> objects,
+          and edit the <path>values.yaml</path> config file as shown in the example:
         </p>
         <code-block lang="yaml">
           volumeClaimTemplates:
@@ -411,89 +417,61 @@
   </chapter>
   <chapter title="Further steps" id="further-steps">
     <p>
-      Follow the basic installation with configuration procedures.
-      Some of them are required as you need to customize Datalore On-Premises in accordance with your project.
+      Once you have your Datalore installation up and running, you need to configure it for your workload and needs.
     </p>
-    <table>
-      <tr>
-        <td>Procedure</td>
-        <td>Description</td>
-      </tr>
-      <tr>
-        <td><b>Required</b></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>
-          <a href="https://www.jetbrains.com/help/datalore/configure-agents-helm-installation.html">
-            Configure agents
-          </a>
-        </td>
-        <td>Used to change the default agents configuration</td>
-      </tr>
-      <tr>
-        <td>
-          <a href="https://www.jetbrains.com/help/datalore/set-up-gpu-machines-k8s.html">Set up GPU machines</a>
-        </td>
-        <td>Used to enable GPU machines</td>
-      </tr>
-      <tr>
-        <td>
-          <a href="https://www.jetbrains.com/help/datalore/configure-plans-helm-installation.html">
-            Configure plans
-          </a>
-        </td>
-        <td>Used to customize plans for your Datalore users</td>
-      </tr>
-      <tr>
-        <td><b>Optional</b></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>
-          <a href="https://www.jetbrains.com/help/datalore/customize-or-update-environment.html">
-            Customize or update environment
-          </a>
-        </td>
-        <td>Used to create multiple base environments out of custom Docker images </td>
-      </tr>
-      <tr>
-        <td>
-          <a href="https://www.jetbrains.com/help/datalore/use-hub-for-helm-installation.html">
-            Set up JetBrains Hub
-          </a>
-        </td>
-        <td>Used to integrate an authentication service</td>
-      </tr>
-      <tr>
-        <td>
-          <a href="https://www.jetbrains.com/help/datalore/enable-gift-codes-helm-installation.html">
-            Enable gift codes
-          </a>
-        </td>
-        <td>Used to enable a service generating and distributing gift codes</td>
-      </tr>
-      <tr>
-        <td>
-          <a href="https://www.jetbrains.com/help/datalore/enable-email-service-helm-installation.html">
-            Enable email service
-          </a>
-        </td>
-        <td>Used to activate email notifications</td>
-      </tr>
-      <tr>
-        <td>
-          <a href="https://www.jetbrains.com/help/datalore/enable-user-activity-logging-helm-installation.html">
-            Enable user activity logging
-          </a>
-        </td>
-        <td>Used to set up auditing of your Datalore users</td>
-      </tr>
-    </table>
-    <p>
-      We also recommend referring to
-      <a href="https://www.jetbrains.com/help/datalore/server-configuration.html">this page</a>
-      for the full list of Datalore server configuration options.
-    </p>
+    <procedure title="Required configuration procedures" type="steps" id="required-configuration-procedures">
+      <step>
+        <a href="https://www.jetbrains.com/help/datalore/configure-agents-helm-installation.html">
+          Configure agents
+        </a>:
+        customize how your agents work to manage your computational resources.
+      </step>
+      <step>
+        <a href="https://www.jetbrains.com/help/datalore/set-up-gpu-machines-k8s.html">Set up GPU machines</a>:
+        enable GPU machines in your installation.
+      </step>
+      <step>
+        <a href="manage-users.topic">Create users</a>:
+        create and manage users and viewers.
+      </step>
+      <step>
+        <a href="https://www.jetbrains.com/help/datalore/configure-plans-helm-installation.html">
+          Configure plans
+        </a>:
+        customize resource usage among your Datalore users.
+      </step>
+    </procedure>
+    <procedure title="Optional configuration procedures" type="choices" id="optional-configuration-procedures">
+      <step>
+        <a href="https://www.jetbrains.com/help/datalore/customize-or-update-environment.html">
+          Customize or update environment
+        </a>:
+        create multiple base environments out of custom Docker images.
+      </step>
+      <step>
+        <a href="https://www.jetbrains.com/help/datalore/use-hub-for-helm-installation.html">
+          Set up JetBrains Hub
+        </a>: integrate an authentication service.
+      </step>
+      <step>
+        <a href="https://www.jetbrains.com/help/datalore/enable-gift-codes-helm-installation.html">
+          Enable gift codes
+        </a>: enable a service generating and distributing gift codes.
+      </step>
+      <step>
+        <a href="https://www.jetbrains.com/help/datalore/enable-email-service-helm-installation.html">
+          Enable email service
+        </a>: activate email notifications.
+      </step>
+      <step>
+        <a href="https://www.jetbrains.com/help/datalore/enable-user-activity-logging-helm-installation.html">
+          Enable user activity logging
+        </a>: set up auditing your Datalore users.
+      </step>
+    </procedure>
+    <tip>
+      For the full list of Datalore server configuration options, see
+      <a href="https://www.jetbrains.com/help/datalore/server-configuration.html">Server configuration</a>
+    </tip>
   </chapter>
 </topic>
